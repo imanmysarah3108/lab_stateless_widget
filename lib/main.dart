@@ -22,38 +22,40 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  String status = 'Active';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dialog Box'),
+        title: const Text('Snack Bar'),
+        centerTitle: true,
       ),
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: Text('Warning'),
-                content: Text('Watch out your click! Are you sure you want to proceed?'),
-                actions: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(); // dismiss dialog
-                    },
-                    child: Text('CANCEL'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(); // add logic if needed
-                    },
-                    child: Text('OK'),
-                  ),
-                ],
+            // Simulate removing something
+            setState(() {
+              status = 'Removed';
+            });
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                duration: const Duration(seconds: 5),
+                behavior: SnackBarBehavior.floating,
+                content: const Text('Successfully removed!'),
+                action: SnackBarAction(
+                  label: 'UNDO',
+                  onPressed: () {
+                    setState(() {
+                      status = 'Active';
+                    });
+                  },
+                ),
               ),
             );
           },
-          child: Text('Click Me'),
+          child: const Text('Click to remove'),
         ),
       ),
     );
