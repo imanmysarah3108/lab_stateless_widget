@@ -22,49 +22,38 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int value = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Stateful Widget'),
-        centerTitle: true,
+        title: Text('Dialog Box'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              '$value',
-              style: TextStyle(
-                fontSize: 50,
-                fontWeight: FontWeight.bold,
+        child: ElevatedButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text('Warning'),
+                content: Text('Watch out your click! Are you sure you want to proceed?'),
+                actions: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // dismiss dialog
+                    },
+                    child: Text('CANCEL'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // add logic if needed
+                    },
+                    child: Text('OK'),
+                  ),
+                ],
               ),
-            ),
-            SizedBox(height: 20), // Add spacing between text and buttons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      value--;
-                    });
-                  },
-                  child: Text('-'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      value++;
-                    });
-                  },
-                  child: Icon(Icons.arrow_upward),
-                ),
-              ],
-            ),
-          ],
+            );
+          },
+          child: Text('Click Me'),
         ),
       ),
     );
