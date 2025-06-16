@@ -22,41 +22,57 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String status = 'Active';
+  final items = List<String>.generate(20, (i) => 'Item ${i + 1}');
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Snack Bar'),
-        centerTitle: true,
+        title: Text("Dismissible List"),
+        backgroundColor: Colors.green,
       ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            // Simulate removing something
-            setState(() {
-              status = 'Removed';
-            });
+      body: ListView.builder(
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          final item = items[index];
+          return Dismissible(
+            key: Key(item),
+            direction: DismissDirection.endToStart,
+            dismissThresholds: const {
+              DismissDirection.startToEnd: 0.5, // 50% swipe right
+              DismissDirection.endToStart: 0.5, // 50% swipe left
+            },
+            onDismissed: (direction) {
+              final removedItem = items[index];
+              final removedIndex = index;
 
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                duration: const Duration(seconds: 5),
-                behavior: SnackBarBehavior.floating,
-                content: const Text('Successfully removed!'),
-                action: SnackBarAction(
-                  label: 'UNDO',
-                  onPressed: () {
-                    setState(() {
-                      status = 'Active';
-                    });
-                  },
+              // Remove the item
+              setState(() {
+                items.removeAt(index);
+              });
+
+              // Show snackbar
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Item dismissed'),
+                  backgroundColor: Colors.green,
+                  action: SnackBarAction(
+                    label: 'UNDO',
+                    onPressed: () {
+                      setState(() {
+                        items.insert(removedIndex, removedItem);
+                      });
+                    },
+                  ),
+                  behavior: SnackBarBehavior.floating,
                 ),
-              ),
-            );
-          },
-          child: const Text('Click to remove'),
-        ),
+              );
+            },
+            // Show a red background as the item is swiped away
+            background: Container(color: Colors.red),
+            child: ListTile(title: Text(item)),
+          );
+        },
       ),
     );
   }
